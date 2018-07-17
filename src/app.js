@@ -19,5 +19,11 @@ app.get('/seasons/:year',async (req,res)=>{
     res.send(teamData);
 })
 
+app.get('/seasons/:year/:teamName',async (req,res)=>{
+    console.log(req.params.year+"  "+req.params.teamName)
+    var playerData = await stats.getPlayerName(Number(req.params.year),req.params.teamName,'matches','deliveries')
+    res.send(playerData);
+})
+
 app.listen(3000);
 console.log('listening');

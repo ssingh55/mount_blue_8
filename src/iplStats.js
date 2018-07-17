@@ -8,7 +8,7 @@ function testConnection(dbName) {
             useNewUrlParser: true
         }, function (err, conn) {
             if (err) {
-                console.log("mongo db service not started")
+                console.log('mongo db service not started')
                 reject(err);
             }
             console.log('Connection established to', url);
@@ -43,12 +43,12 @@ function getTeamName(year, matches) {
             var teamName = await dbColln.aggregate(
                 [{
                         $match: {
-                            "season": year
+                            'season': year
                         }
                     },
                     {
                         $group: {
-                            "_id": "$team1"
+                            '_id': '$team1'
                         }
                     }
                 ]
@@ -60,14 +60,17 @@ function getTeamName(year, matches) {
 }
 
 function getPlayerName(year, team, matches, deliveries) {
-    db.testMatches.aggregate([{
+
+
+
+    db.matches.aggregate([{
             $match: {
                 season: 2016
             }
         },
         {
             $lookup: {
-                from: 'testDeliveries',
+                from: 'deliveries',
                 localField: 'id',
                 foreignField: 'match_id',
                 as: 'playerDetails'
@@ -77,13 +80,20 @@ function getPlayerName(year, team, matches, deliveries) {
         },
         {
             $group: {
-                '_id': "$team2"
+                _id: {
+                    team: '$team2',
+                    playerName: '$playerDetails.non-striker'
+                }
             }
         }
-    ])
+    ]).pretty()
+
+
+
 }
 
 module.exports = {
     getSeason,
-    getTeamName
+    getTeamName,
+    getPlayerName
 }
