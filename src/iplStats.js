@@ -28,7 +28,6 @@ function getSeason(matches) {
             }
             var dbColln = await conn.collection(matches);
             var seasonData = await dbColln.distinct('season');
-            // console.log(seasonData)
             resolve(seasonData.sort());
         })
     })
@@ -53,7 +52,6 @@ function getTeamName(year, matches) {
                     }
                 ]
             ).toArray()
-            // console.log(teamName.map(a => a._id))
             resolve(teamName.map(a => a._id));
         })
     })
@@ -100,7 +98,6 @@ function getPlayerName(year, team, matches, deliveries) {
                     }
                 }
             ]).toArray()
-            // console.log(playerName.map(a => a._id.player))
             resolve(playerName.map(a => a._id.player))
         })
     })
@@ -169,91 +166,3 @@ module.exports = {
     getPlayerName,
     getPlayerBoundaries
 }
-
-
-/*
-db.matches.aggregate([{
-        $match: {
-            season: 2017
-        }
-    },
-    {
-        $lookup: {
-            from: 'deliveries',
-            localField: 'id',
-            foreignField: 'match_id',
-            as: 'playerDetails'
-        }
-    },
-    {
-        $unwind: '$playerDetails'
-    },
-    {
-        $project: {
-            myTeam: "$playerDetails.batting_team",
-            playerName: "$playerDetails.batsman",
-            playerRuns: "$playerDetails.batsman_runs"
-        }
-    },
-    {
-        $match: {
-            playerName: 'LMP Simmons'
-        }
-    },
-    {
-        $group: {
-            '_id': '$playerName',
-            count: {
-                $sum: {
-                    $cond: {
-                        if: {
-                            $gt: ['$playerRuns', 3]
-                        },
-                        then: 1,
-                        else: 0
-                    }
-                }
-            }
-        }
-    }
-])
-*/
-
-
-/*
-db.matches.aggregate([{
-        $match: {
-            season: 2016
-        }
-    },
-    {
-        $lookup: {
-            from: 'deliveries',
-            localField: 'id',
-            foreignField: 'match_id',
-            as: 'playerDetails'
-        }
-    },
-    {
-        $unwind: '$playerDetails'
-    },
-    {
-        $project: {
-            myTeam: "$playerDetails.batting_team",
-            playerName: "$playerDetails.batsman"
-
-        }
-    },
-    {
-        $match: {
-            myTeam: 'Mumbai Indians'
-        }
-    }, {
-        $group: {
-            _id: {
-                player: '$playerName'
-            }
-        }
-    }
-]).pretty()
-*/

@@ -48,11 +48,10 @@ function teamNameDetails(yearDetails) {
 function playerName(year, teamName) {
     // console.log(year, teamName)
     $('#' + teamName.substring(0, 3) + ' span').on('click', function () {
-        fetch('/seasons/' + year + "/teams/" + teamName)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (myJson) {
+        $.ajax({
+            url: '/seasons/' + year + "/teams/" + teamName,
+            type: 'GET',
+            success: function (myJson) {
                 // console.log(myJson)
                 var jsonData = myJson;
                 if ($('#' + teamName.substring(0, 3)).find('li').length == 0) {
@@ -66,7 +65,8 @@ function playerName(year, teamName) {
                 } else {
                     $('#' + teamName.substring(0, 3) + ' ul').remove();
                 }
-            })
+            }
+        })
     })
 }
 
@@ -86,10 +86,61 @@ function playerBoundaries(year, teamName, playerName) {
                         $('#' + playerName.replace(/ /g, "_") + ' ul').append('<li id="' + data + '"><span>Total boundaries score : ' + data + '</span></li>');
                         $('#' + data).addClass("dropdown");
                     })
+                    displayHighCharts(year, teamName, playerName)
                 } else {
                     $('#' + playerName.replace(/ /g, "_") + ' ul').remove();
                 }
             }
         })
+    })
+}
+
+function displayHighCharts(year, teamName, playerName) {
+    $(document).ready(function () {
+        $.ajax({
+            url: '/seasons/' + year + '/teams/' + teamName + '/players/' + playerName,
+            type: 'GET',
+            data: '/seasons/' + year + '/teams/' + teamName + '/players/' + playerName,
+            success: function (myJson) {
+                var chart = {
+                    type: 'column'
+                };
+                var title = {
+                    text: 'Boundaries Scored'
+                };
+                var subtitle = {
+                    text: 'Source: Ipl  (Kaggle)'
+                };
+                var xAxis = {
+                    categories: myJson._id,
+                    crosshair: true
+                };
+                var yAxis = {
+                    min: 0,
+                    title: {
+                        text: 'Boundaries'
+                    }
+                };
+                var plotOptions = {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                };
+                var series = [{
+                    name: [playerName],
+                    data: myJson
+                }];
+                var json = {};
+                json.chart = chart;
+                json.title = title;
+                json.subtitle = subtitle;
+                json.xAxis = xAxis;
+                json.yAxis = yAxis;
+                json.series = series;
+                json.plotOptions = plotOptions;
+                $('#container1').highcharts(json);
+            }
+        });
     })
 }

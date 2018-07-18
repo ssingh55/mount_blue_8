@@ -1,6 +1,10 @@
 *{
     font-size: 20px;
 }
+nav p{
+    width: 
+}
+
 nav ul {
     list-style-type: none;
     margin: 0;
@@ -26,7 +30,17 @@ ul li:clicked>span {
     color: white;
     background-color: #555;
 }
-
+.wrapper{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+#container1{
+    right: 200px;
+    float: left;
+    position: absolute;
+    margin-top: -48px;
+    width: 30%;
+}
 .dropdown-content {
     /* min-width: 150px; */
     left: 200px;
