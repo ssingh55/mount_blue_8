@@ -65,7 +65,8 @@ function getPlayerName(year, team, matches, deliveries) {
 
     db.matches.aggregate([{
             $match: {
-                season: 2016
+                season: 2016,
+                team1: team
             }
         },
         {
@@ -81,8 +82,7 @@ function getPlayerName(year, team, matches, deliveries) {
         {
             $group: {
                 _id: {
-                    team: '$team2',
-                    playerName: '$playerDetails.non-striker'
+                    playerName: '$playerDetails.batting'
                 }
             }
         }

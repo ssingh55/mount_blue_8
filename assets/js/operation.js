@@ -7,8 +7,10 @@ $('#seasons p').on('click', function () {
             var jsonData = myJson;
             if (($('#seasons').find('li').length) == 0) {
                 $('#seasons').append('<ul></ul>');
+                 $('#seasons ul').addClass="dropdown-content"
                 jsonData.forEach((data) => {
                     $('#seasons ul').append('<li id="' + data + '">' + data + '</li>');
+                    $('#' + data.substring(0,3)).addClass="dropdown";
                     teamName(data);
                 })
             } else {
@@ -25,12 +27,14 @@ function teamName(yearDetails) {
                 return response.json();
             })
             .then(function (myJson) {
-                var data = myJson;
+                var jsonData = myJson;
                 if ($('#' + yearDetails).find('li').length == 0) {
                     $('#' + yearDetails).append('<ul></ul>');
-                    data.forEach((data2) => {
-                        $('#' + yearDetails + ' ul').append('<li id="'+data2.substring(0,3)+'">' + data2 + '</li>');
-                        playerName(yearDetails,data2)
+                    $('#' + yearDetails + ' ul').addClass="dropdown-content"
+                    jsonData.forEach((data) => {
+                        $('#' + yearDetails + ' ul').append('<li id="'+data.substring(0,3)+'">' + data + '</li>');
+                        $('#' + data.substring(0,3)).addClass="dropdown";
+                        playerName(yearDetails,data)
                     })
                 } else {
                     $('#' + yearDetails + ' ul').remove();
@@ -47,10 +51,12 @@ function playerName(year,teamName){
         })
         .then(function (myJson){
             console.log(myJson)
-            var data = myJson;
+            var jsonData = myJson;
             $('#'+teamName.substring(0,3)).append('<ul></ul>');
-            data.forEach((data2)=>{
-                $('#'+teamName.substring(0,3)+' ul').append('<li id="'+data2.substring(0,3)+'">'+data2+'</li>')
+            $('#'+teamName.substring(0,3)+' ul').addClass="dropdown-content"
+            jsonData.forEach((data)=>{
+                $('#'+teamName.substring(0,3)+' ul').append('<li id="'+data.substring(0,3)+'">'+data+'</li>');
+                $('#' + data.substring(0,3)).addClass="dropdown";
             })
         })
     })
