@@ -1,24 +1,48 @@
-nav ul {list-style-type: none; margin:0; padding:0; width: 200px; background-color: #f1f1f1; position: fixed;}
-nav ul li {min-width: 200px; font-size:14px;}
-nav ul li a {display: block; color: #000; text-decoration: none; padding: 16px 0 16px 16px;}
-ul li:hover > a {color: white; background-color: #555;}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+}
+
+nav ul li {
+    /* min-width: 200px; */
+    font-size: 14px;
+}
+
+nav ul li span {
+    display: block;
+    color: #000;
+    text-decoration: none;
+    padding: 16px 0 16px 16px;
+}
+
+ul li:clicked>span {
+    color: white;
+    background-color: #555;
+}
 
 .dropdown-content {
-	min-width: 150px;
-	left: 200px;
-    float:left;
+    /* min-width: 150px; */
+    left: 200px;
+    float: left;
     position: absolute;
-	font-size:14px;
-	margin-top: -48px;
+    font-size: 14px;
+    margin-top: -48px;
+    /* background-color: aqua */
 }
-.dropdown-content a {
-    background-color: #fbfbfb;
+
+.dropdown-content span {
+    /* background-color: yellow; */
     color: black;
     text-decoration: none;
     display: block;
     text-align: left;
-	padding: 16px 0 16px 16px;
+    padding: 16px 0 16px 16px;
 }
-.dropdown:hover > .dropdown-content {
+
+.dropdown:clicked>.dropdown-content {
     display: inline-block;
 }

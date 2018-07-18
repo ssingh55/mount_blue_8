@@ -14,14 +14,14 @@ app.get('/seasons',async (req,res)=>{
     res.send(seasonData);
 })
 
-app.get('/seasons/:year',async (req,res)=>{
-    var teamData = await stats.getTeamName(Number(req.params.year),'matches');
+app.get('/seasons/:season',async (req,res)=>{
+    var teamData = await stats.getTeamName(Number(req.params.season),'matches');
     res.send(teamData);
 })
 
-app.get('/seasons/:year/:teamName',async (req,res)=>{
-    console.log(req.params.year+"  "+req.params.teamName)
-    var playerData = await stats.getPlayerName(Number(req.params.year),req.params.teamName,'matches','deliveries')
+app.get('/seasons/:season/teams/:teamName',async (req,res)=>{
+    // console.log(req.params.season+"  "+req.params.teamName)
+    var playerData = await stats.getPlayerName(Number(req.params.season),req.params.teamName,'matches','deliveries')
     res.send(playerData);
 })
 
