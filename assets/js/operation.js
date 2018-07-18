@@ -47,24 +47,49 @@ function teamNameDetails(yearDetails) {
 
 function playerName(year, teamName) {
     // console.log(year, teamName)
-    $('#' + teamName.substring(0, 3)).on('click', function () {
+    $('#' + teamName.substring(0, 3) + ' span').on('click', function () {
         fetch('/seasons/' + year + "/teams/" + teamName)
             .then(function (response) {
                 return response.json();
             })
             .then(function (myJson) {
-                console.log(myJson)
+                // console.log(myJson)
                 var jsonData = myJson;
                 if ($('#' + teamName.substring(0, 3)).find('li').length == 0) {
                     $('#' + teamName.substring(0, 3)).append('<ul></ul>');
                     $('#' + teamName.substring(0, 3) + ' ul').addClass("dropdown-content")
                     jsonData.forEach((data) => {
-                        $('#' + teamName.substring(0, 3) + ' ul').append('<li id="' + data + '"><span>' + data + '</span></li>');
+                        $('#' + teamName.substring(0, 3) + ' ul').append('<li id="' + data.replace(/ /g, "_") + '"><span>' + data + '</span></li>');
+                        $('#' + data.replace(/ /g, "_")).addClass("dropdown");
+                        playerBoundaries(year, teamName, data)
+                    })
+                } else {
+                    $('#' + teamName.substring(0, 3) + ' ul').remove();
+                }
+            })
+    })
+}
+
+function playerBoundaries(year, teamName, playerName) {
+    $('#' + playerName.replace(/ /g, "_") + ' span').on('click', function () {
+        $.ajax({
+            url: '/seasons/' + year + '/teams/' + teamName + '/players/' + playerName,
+            type: 'GET',
+            data: '/seasons/' + year + '/teams/' + teamName + '/players/' + playerName,
+            success: function (myJson) {
+                // console.log('hello')
+                var jsonData = myJson;
+                if ($('#' + playerName.replace(/ /g, "_")).find('li').length == 0) {
+                    $('#' + playerName.replace(/ /g, "_")).append('<ul></ul>');
+                    $('#' + playerName.replace(/ /g, "_") + ' ul').addClass("dropdown-content")
+                    jsonData.forEach((data) => {
+                        $('#' + playerName.replace(/ /g, "_") + ' ul').append('<li id="' + data + '"><span>Total boundaries score : ' + data + '</span></li>');
                         $('#' + data).addClass("dropdown");
                     })
                 } else {
-                    $('#' + teamName.substring(0, 3)+' ul').remove();
+                    $('#' + playerName.replace(/ /g, "_") + ' ul').remove();
                 }
-            })
+            }
+        })
     })
 }

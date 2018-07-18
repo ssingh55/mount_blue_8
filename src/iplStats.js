@@ -59,14 +59,13 @@ function getTeamName(year, matches) {
     })
 }
 
+//getting the player name
 function getPlayerName(year, team, matches, deliveries) {
     return new Promise((resolve, reject) => {
         testConnection('iplData').then(async function (conn, err) {
             if (err) reject(err);
-            console.log(year, team, matches, deliveries);
             var dbColln = await conn.collection(matches);
-            var playerName = await dbColln.aggregate([
-                {
+            var playerName = await dbColln.aggregate([{
                     $match: {
                         season: year
                     }
@@ -101,17 +100,75 @@ function getPlayerName(year, team, matches, deliveries) {
                     }
                 }
             ]).toArray()
-            console.log(playerName.map(a=>a._id.player))
+            // console.log(playerName.map(a => a._id.player))
             resolve(playerName.map(a => a._id.player))
         })
     })
 }
-// getPlayerName(2017,'Royal Challengers Bangalore','matches','deliveries')
 
-function getPlayerDetails(year, team, playerName, matches, deliveries) {
+//getting the player boundaries
+function getPlayerBoundaries(year, player, matches, deliveries) {
+    return new Promise((resolve, reject) => {
+        testConnection('iplData').then(async function (conn, err) {
+            if (err) reject(err);
+            var dbColln = await conn.collection(matches);
+            var playerBoundaries = await dbColln.aggregate([{
+                    $match: {
+                        season: year
+                    }
+                },
+                {
+                    $lookup: {
+                        from: deliveries,
+                        localField: 'id',
+                        foreignField: 'match_id',
+                        as: 'playerDetails'
+                    }
+                },
+                {
+                    $unwind: '$playerDetails'
+                },
+                {
+                    $project: {
+                        playerName: "$playerDetails.batsman",
+                        playerRuns: "$playerDetails.batsman_runs"
+                    }
+                },
+                {
+                    $match: {
+                        playerName: player
+                    }
+                },
+                {
+                    $group: {
+                        '_id': '$playerName',
+                        'boundaries': {
+                            $sum: {
+                                $cond: {
+                                    if: {
+                                        $gt: ['$playerRuns', 3]
+                                    },
+                                    then: 1,
+                                    else: 0
+                                }
+                            }
+                        }
+                    }
+                }
+            ]).toArray()
+            // console.log(playerBoundaries.map(a => a.boundaries))
+            resolve(playerBoundaries.map(a => a.boundaries))
 
+        })
+    })
 }
-// getPlayerDetails(2017,'Royal Challengers Bangalore','AC Gilchrist','matches','deliveries')
+
+module.exports = {
+    getSeason,
+    getTeamName,
+    getPlayerName,
+    getPlayerBoundaries
+}
 
 
 /*
@@ -135,12 +192,12 @@ db.matches.aggregate([{
         $project: {
             myTeam: "$playerDetails.batting_team",
             playerName: "$playerDetails.batsman",
-            playerRuns: "$playersDetails.batsman_runs"
+            playerRuns: "$playerDetails.batsman_runs"
         }
     },
     {
         $match: {
-            myTeam: 'Mumbai Indians'
+            playerName: 'LMP Simmons'
         }
     },
     {
@@ -150,10 +207,10 @@ db.matches.aggregate([{
                 $sum: {
                     $cond: {
                         if: {
-                            $gt: ['$playerRuns', 0]
+                            $gt: ['$playerRuns', 3]
                         },
-                        then: 0,
-                        else: 1
+                        then: 1,
+                        else: 0
                     }
                 }
             }
@@ -161,10 +218,6 @@ db.matches.aggregate([{
     }
 ])
 */
-
-
-
-
 
 
 /*
@@ -204,12 +257,3 @@ db.matches.aggregate([{
     }
 ]).pretty()
 */
-
-
-
-
-module.exports = {
-    getSeason,
-    getTeamName,
-    getPlayerName
-}
